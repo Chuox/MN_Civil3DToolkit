@@ -1,0 +1,133 @@
+{
+  "Uuid": "9cd8d5b5-1676-48df-ae4c-5bd48442abbe",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "tests1",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Function, DynamoCore",
+      "FunctionSignature": "24eac61a-e361-4850-ab51-ab2528517293",
+      "FunctionType": "Graph",
+      "NodeType": "FunctionNode",
+      "Id": "b46d21e4abe941f6a726f54f650b6eb9",
+      "Inputs": [
+        {
+          "Id": "9fd7b5062d4b4ebeb24aad8fb9c3dfc7",
+          "Name": "Surface_Name",
+          "Description": "string\nDefault value : \"surface\"",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "2f317d7bde834b868f1d35eb97b918b0",
+          "Name": "OUT",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Get the volume of a surface given the name"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "VOL-WATER",
+      "Id": "c9b9cf739ae347e2af4f554a7badc9e2",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "ae71cf01875d43f09593fcf1d2fe73ee",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "ae71cf01875d43f09593fcf1d2fe73ee",
+      "End": "9fd7b5062d4b4ebeb24aad8fb9c3dfc7",
+      "Id": "ade7c917d2f74108b80e7897e125af76"
+    }
+  ],
+  "Dependencies": [
+    "24eac61a-e361-4850-ab51-ab2528517293"
+  ],
+  "NodeLibraryDependencies": [
+    {
+      "Name": "MN_Civil3DToolkit",
+      "Version": "0.0.1",
+      "ReferenceType": "Package",
+      "Nodes": [
+        "b46d21e4abe941f6a726f54f650b6eb9"
+      ]
+    }
+  ],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.10.1.3976",
+      "RunType": "Automatic",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "GetSurfaceVolume",
+        "Id": "b46d21e4abe941f6a726f54f650b6eb9",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 276.00000000000006,
+        "Y": 238.40000000000003
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "String",
+        "Id": "c9b9cf739ae347e2af4f554a7badc9e2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 107.99999999999994,
+        "Y": 245.59999999999997
+      }
+    ],
+    "Annotations": [],
+    "X": 0.0,
+    "Y": 0.0,
+    "Zoom": 1.0
+  }
+}

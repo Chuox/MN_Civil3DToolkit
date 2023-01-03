@@ -1,0 +1,137 @@
+{
+  "Uuid": "24eac61a-e361-4850-ab51-ab2528517293",
+  "IsCustomNode": true,
+  "Category": "MN_Civil3DToolkit",
+  "Description": "Get the volume of a surface given the name",
+  "Name": "GetSurfaceVolume",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "ff22d9b4ead147a084bf7514ec194b5d",
+      "Name": "Get Volume",
+      "Type": "unknown",
+      "InitialValue": "",
+      "Description": "Runs an embedded IronPython script."
+    }
+  ],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "#Get Corridor ID\r\n\r\n__author__ = 'Jesus A Duran - jduran@moffattnichol.com'\r\n__version__ = '0.0.0'\r\n\r\n# Load the Python Standard and DesignScript Libraries\r\nimport sys\r\nimport clr\r\n\r\n# Add Assemblies for AutoCAD and Civil3D\r\nclr.AddReference('AcMgd')\r\nclr.AddReference('AcCoreMgd')\r\nclr.AddReference('AcDbMgd')\r\nclr.AddReference('AecBaseMgd')\r\nclr.AddReference('AecPropDataMgd')\r\nclr.AddReference('AeccDbMgd')\r\nclr.AddReference('AeccPressurePipesMgd')\r\nclr.AddReference('acdbMgdbRep')\r\n\r\n# Create an alias to the Autodesk.AutoCAD.ApplicationServices.Application class\r\nimport Autodesk.AutoCAD.ApplicationServices.Application as acapp\r\n\r\n# Import references from AutoCAD\r\nfrom Autodesk.AutoCAD.Runtime import *\r\nfrom Autodesk.AutoCAD.ApplicationServices import *\r\nfrom Autodesk.AutoCAD.EditorInput import *\r\nfrom Autodesk.AutoCAD.DatabaseServices import *\r\nfrom Autodesk.AutoCAD.Geometry import *\r\n\r\n# Import references for PropertySets\r\nfrom Autodesk.Aec.PropertyData import *\r\nfrom Autodesk.Aec.PropertyData.DatabaseServices import *\r\n\r\n# Import references from Civil3D\r\nfrom Autodesk.Civil.ApplicationServices import *\r\nfrom Autodesk.Civil.DatabaseServices import *\r\n\r\n# The inputs to this node will be stored as a list in the IN variables.\r\ndataEnteringNode = IN\r\n\r\nadoc = acapp.DocumentManager.MdiActiveDocument\r\ned = adoc.Editor\r\n\r\n\r\ndef get_tinvolumesurface_Vol(vs_name):\r\n\tadoc = acapp.DocumentManager.MdiActiveDocument\r\n\t\r\n\tvsid = None\r\n\t\r\n\tvs_output = {}\r\n\toutput = {}\r\n\touttest = {}\r\n\t\r\n\twith adoc.LockDocument():\r\n\t\twith adoc.Database as db:\r\n\t\t\twith db.TransactionManager.StartTransaction() as t:\r\n\t\t\t\tbt = t.GetObject(db.BlockTableId, OpenMode.ForWrite)\r\n\t\t\t\tbtr = t.GetObject(bt[BlockTableRecord.ModelSpace], OpenMode.ForWrite)\r\n\t\t\t\t\r\n\t\t\t\tfor oid in btr:\r\n\t\t\t\t\tobj = t.GetObject(oid, OpenMode.ForWrite)\r\n\t\t\t\t\tif isinstance(obj, TinVolumeSurface):\r\n\t\t\t\t\t\tif obj.Name == vs_name:\r\n\t\t\t\t\t\t\tvsid = oid\r\n\t\t\t\t\tif vsid is not None:\r\n\t\t\t\t\t\tbreak\r\n\t\t\t\t\r\n\t\t\t\tif vsid is None:\r\n\t\t\t\t\t\r\n\t\t\t\t\treturn \"Surface not found\"\r\n\r\n\t\t\t\tvs = t.GetObject(vsid, OpenMode.ForWrite)\r\n\t\t\t\tvs.Rebuild()\r\n\t\t\t\tvolProps = vs.GetVolumeProperties()\r\n\t\t\t\tgenProps = vs.GetGeneralProperties()\r\n\t\t\t\tTinProps = vs.GetTinProperties()\r\n\t\t\t\t#surf_analy = vs.Analysis.GetElevationData()\r\n\t\t\t\t#props = vs.GetTerrainProperties()\r\n\t\t\t\t\r\n\t\t\t\tfor a in dir(volProps):\r\n\t\t\t\t\ttry:\r\n\t\t\t\t\t\tvs_output[a] = getattr(volProps, a)\r\n\t\t\t\t\texcept:\r\n\t\t\t\t\t\tpass\r\n\t\t\t\tt.Commit()\r\n\t\t\t\toutput[\"Cut Factor\"] = vs_output[\"CutFactor\"]\r\n\t\t\t\toutput[\"Fill Factor\"] = vs_output[\"FillFactor\"]\r\n\t\t\t\t#output[\"2d Area\"] = vs_output[\"CutFactor\"]\r\n\t\t\t\t#Divides in 27 to convert to Cu. Yards\r\n\t\t\t\toutput[\"Adjusted Cut\"] = vs_output[\"AdjustedCutVolume\"]/27\r\n\t\t\t\toutput[\"Adjusted Fill\"] = vs_output[\"AdjustedFillVolume\"]/27\r\n\t\t\t\toutput[\"Adjusted Net\"] = vs_output[\"AdjustedNetVolume\"]/27\r\n\treturn output\r\n\r\nOUT = get_tinvolumesurface_Vol(IN[0])\r\n",
+      "VariableInputPorts": true,
+      "Id": "ff22d9b4ead147a084bf7514ec194b5d",
+      "Inputs": [
+        {
+          "Id": "a9e821c0a9234139b77ca9d57daa7e69",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "0b88e1f9d1cf4e768bed55eae889899b",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Symbol, DynamoCore",
+      "NodeType": "InputNode",
+      "Parameter": {
+        "Name": "Surface_Name",
+        "TypeName": "string",
+        "TypeRank": 0,
+        "DefaultValue": "\"surface\"",
+        "Description": ""
+      },
+      "Id": "ccd5a032c8d142f5b5bf39f5b03c06b8",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b5feab318a5947c2adbca0375335cbff",
+          "Name": "",
+          "Description": "Symbol",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "A function parameter, use with custom nodes.\r\n\r\nYou can specify the type and default value for parameter. E.g.,\r\n\r\ninput : var[]..[]\r\nvalue : bool = false"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "b5feab318a5947c2adbca0375335cbff",
+      "End": "a9e821c0a9234139b77ca9d57daa7e69",
+      "Id": "8d6f447eedae4829aa6496c026c498e9"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": false,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.4.1.6326",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Get Volume",
+        "Id": "ff22d9b4ead147a084bf7514ec194b5d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "X": 624.59460067043585,
+        "Y": 66.510033573231283
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Volume Surface Name",
+        "Id": "ccd5a032c8d142f5b5bf39f5b03c06b8",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 250.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [],
+    "X": -157.33168244618014,
+    "Y": 209.47279161425178,
+    "Zoom": 0.98264231136796543
+  }
+}
